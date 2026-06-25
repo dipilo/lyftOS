@@ -19,7 +19,7 @@
 #          ###################
 #              ###########
 #
-# Welcome to Bazzite! If you're looking to
+# Welcome to lyftOS! If you're looking to
 # build your own, we highly recommend you
 # use our custom image template. Forking
 # the main repo provides more control, but
@@ -32,7 +32,7 @@ ARG FEDORA_VERSION="${FEDORA_VERSION:-44}"
 ARG ARCH="${ARCH:-x86_64}"
 
 ARG BASE_IMAGE="${BASE_IMAGE:-ghcr.io/ublue-os/${BASE_IMAGE_NAME}-main:${FEDORA_VERSION}}"
-ARG NVIDIA_BASE="${NVIDIA_BASE:-bazzite}"
+ARG NVIDIA_BASE="${NVIDIA_BASE:-lyftos}"
 ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-ogc}"
 ARG KERNEL_VERSION="${KERNEL_VERSION:-7.0.9-ogc3.2.fc44.x86_64}"
 ARG NVIDIA_FLAVOR="${NVIDIA_FLAVOR:-nvidia-open}"
@@ -88,9 +88,9 @@ RUN dnf5 -y install \
 # DESKTOP BUILDS
 ################
 
-FROM ${BASE_IMAGE} AS bazzite
+FROM ${BASE_IMAGE} AS lyftos
 
-ARG IMAGE_NAME="${IMAGE_NAME:-bazzite}"
+ARG IMAGE_NAME="${IMAGE_NAME:-lyftos}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-stable}"
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
@@ -109,7 +109,7 @@ RUN --mount=type=bind,src=firmware,dst=/ctx/firmware \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
     cp -a /ctx/firmware/. /tmp/firmware && \
-    find /tmp/firmware -type f -exec setfattr -n user.component -v "bazzite-nonfree" {} + && \
+    find /tmp/firmware -type f -exec setfattr -n user.component -v "lyftos-nonfree" {} + && \
     rm -rf /tmp/firmware/.git && \
     cp -a /tmp/firmware/. / && \
     rm -rf /tmp/firmware
@@ -160,7 +160,7 @@ RUN --mount=type=cache,dst=/var/cache \
     sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo && \
     dnf5 -y config-manager setopt "*terra*".priority=1 "*terra*".exclude="nerd-fonts scx-tools scx-scheds python3-protobuf zlib-devel uupd" && \
     dnf5 -y config-manager setopt "terra-mesa".enabled=false && \
-    dnf5 -y config-manager setopt "*bazzite*".priority=2 && \
+    dnf5 -y config-manager setopt "*lyftos*".priority=2 && \
     eval "$(/ctx/dnf5-setopt setopt '*negativo17*' priority=4 exclude='mesa-* *xone*')" && \
     dnf5 -y config-manager setopt "*fedora*".exclude="mesa-* kernel-core-* kernel-modules-* kernel-uki-virt-* steam" && \
     dnf5 -y config-manager setopt "*audinux*".exclude="kernel*" && \
@@ -464,8 +464,8 @@ RUN --mount=type=cache,dst=/var/cache \
         ln -sf /usr/share/wallpapers/convergence.jxl /usr/share/backgrounds/default.jxl && \
         ln -sf /usr/share/wallpapers/convergence.jxl /usr/share/backgrounds/default-dark.jxl && \
         rm -f /usr/share/backgrounds/default.xml && \
-        mkdir -p /usr/share/wallpapers/bazzite/convergence/contents/images && \
-        ln -s /usr/share/wallpapers/convergence.jxl /usr/share/wallpapers/bazzite/convergence/contents/images/3940x2160.jxl \
+        mkdir -p /usr/share/wallpapers/lyftos/convergence/contents/images && \
+        ln -s /usr/share/wallpapers/convergence.jxl /usr/share/wallpapers/lyftos/convergence/contents/images/3940x2160.jxl \
     ; else \
         dnf5 -y install \
             nautilus-gsconnect \
@@ -554,17 +554,17 @@ RUN --mount=type=cache,dst=/var/cache \
     echo "import \"/usr/share/ublue-os/just/92-bazzite-verify.just\"" >> /usr/share/ublue-os/justfile && \
     if grep -q "silverblue" <<< "${BASE_IMAGE_NAME}"; then \
         mkdir -p "/usr/share/ublue-os/dconfs/desktop-silverblue/" && \
-        cp "/usr/share/glib-2.0/schemas/zz0-"*"-bazzite-desktop-silverblue-"*".gschema.override" "/usr/share/ublue-os/dconfs/desktop-silverblue/" && \
+        cp "/usr/share/glib-2.0/schemas/zz0-"*"-lyftos-desktop-silverblue-"*".gschema.override" "/usr/share/ublue-os/dconfs/desktop-silverblue/" && \
         find "/etc/dconf/db/distro.d/" -maxdepth 1 -type f -exec cp {} "/usr/share/ublue-os/dconfs/desktop-silverblue/" \; && \
-        dconf-override-converter to-dconf "/usr/share/ublue-os/dconfs/desktop-silverblue/zz0-"*"-bazzite-desktop-silverblue-"*".gschema.override" && \
-        sed -i 's/\[org.gtk.Settings.FileChooser\]/\[org\/gtk\/settings\/file-chooser\]/g; s/\[org.gtk.gtk4.Settings.FileChooser\]/\[org\/gtk\/gtk4\/settings\/file-chooser\]/g' "/usr/share/ublue-os/dconfs/desktop-silverblue/zz0-00-bazzite-desktop-silverblue-global" && \
-        rm "/usr/share/ublue-os/dconfs/desktop-silverblue/zz0-"*"-bazzite-desktop-silverblue-"*".gschema.override" && \
-        mkdir -p /tmp/bazzite-schema-test && \
-        find "/usr/share/glib-2.0/schemas/" -type f ! -name "*.gschema.override" -exec cp {} "/tmp/bazzite-schema-test/" \; && \
-        cp "/usr/share/glib-2.0/schemas/zz0-"*".gschema.override" "/tmp/bazzite-schema-test/" && \
-        glib-compile-schemas --strict /tmp/bazzite-schema-test && \
+        dconf-override-converter to-dconf "/usr/share/ublue-os/dconfs/desktop-silverblue/zz0-"*"-lyftos-desktop-silverblue-"*".gschema.override" && \
+        sed -i 's/\[org.gtk.Settings.FileChooser\]/\[org\/gtk\/settings\/file-chooser\]/g; s/\[org.gtk.gtk4.Settings.FileChooser\]/\[org\/gtk\/gtk4\/settings\/file-chooser\]/g' "/usr/share/ublue-os/dconfs/desktop-silverblue/zz0-00-lyftos-desktop-silverblue-global" && \
+        rm "/usr/share/ublue-os/dconfs/desktop-silverblue/zz0-"*"-lyftos-desktop-silverblue-"*".gschema.override" && \
+        mkdir -p /tmp/lyftos-schema-test && \
+        find "/usr/share/glib-2.0/schemas/" -type f ! -name "*.gschema.override" -exec cp {} "/tmp/lyftos-schema-test/" \; && \
+        cp "/usr/share/glib-2.0/schemas/zz0-"*".gschema.override" "/tmp/lyftos-schema-test/" && \
+        glib-compile-schemas --strict /tmp/lyftos-schema-test && \
         glib-compile-schemas /usr/share/glib-2.0/schemas &>/dev/null && \
-        rm -r /tmp/bazzite-schema-test \
+        rm -r /tmp/lyftos-schema-test \
     ; fi && \
     sed -i 's/stage/none/g' /etc/rpm-ostreed.conf && \
     for repo in \
@@ -588,10 +588,10 @@ RUN --mount=type=cache,dst=/var/cache \
     done && unset -v copr && \
     eval "$(/ctx/dnf5-setopt setopt '*negativo17*' enabled=0)" && \
     sed -i 's#/var/lib/selinux#/etc/selinux#g' /usr/lib/python3.*/site-packages/setroubleshoot/util.py && \
-    sed -i 's/power-saver=powersave$/power-saver=powersave-bazzite/' /etc/tuned/ppd.conf && \
-    sed -i 's/balanced=balanced$/balanced=balanced-bazzite/' /etc/tuned/ppd.conf && \
-    sed -i 's/performance=throughput-performance$/performance=throughput-performance-bazzite/' /etc/tuned/ppd.conf && \
-    sed -i 's/balanced=balanced-battery$/balanced=balanced-battery-bazzite\npower-saver=powersave-battery-bazzite/' /etc/tuned/ppd.conf && \
+    sed -i 's/power-saver=powersave$/power-saver=powersave-lyftos/' /etc/tuned/ppd.conf && \
+    sed -i 's/balanced=balanced$/balanced=balanced-lyftos/' /etc/tuned/ppd.conf && \
+    sed -i 's/performance=throughput-performance$/performance=throughput-performance-lyftos/' /etc/tuned/ppd.conf && \
+    sed -i 's/balanced=balanced-battery$/balanced=balanced-battery-lyftos\npower-saver=powersave-battery-lyftos/' /etc/tuned/ppd.conf && \
     ln -s /usr/bin/true /usr/bin/pulseaudio && \
     mkdir -p /etc/flatpak/remotes.d && \
     curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo && \
@@ -638,9 +638,9 @@ RUN --mount=type=tmpfs,target=/run --network=none bootc container lint
 # DECK BUILDS
 ################
 
-FROM bazzite AS bazzite-deck
+FROM lyftos AS lyftos-deck
 
-ARG IMAGE_NAME="${IMAGE_NAME:-bazzite-deck}"
+ARG IMAGE_NAME="${IMAGE_NAME:-lyftos-deck}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-stable}"
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
@@ -822,9 +822,9 @@ RUN --mount=type=tmpfs,target=/run --network=none bootc container lint
 # NVIDIA BUILDS
 ################
 
-FROM ${NVIDIA_BASE} AS bazzite-nvidia
+FROM ${NVIDIA_BASE} AS lyftos-nvidia
 
-ARG IMAGE_NAME="${IMAGE_NAME:-bazzite-nvidia}"
+ARG IMAGE_NAME="${IMAGE_NAME:-lyftos-nvidia}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-stable}"
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
@@ -876,12 +876,12 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
-    echo "import \"/usr/share/ublue-os/just/95-bazzite-nvidia.just\"" >> /usr/share/ublue-os/justfile && \
+    echo "import \"/usr/share/ublue-os/just/95-lyftos-nvidia.just\"" >> /usr/share/ublue-os/justfile && \
     if grep -q "silverblue" <<< "${BASE_IMAGE_NAME}"; then \
         mkdir -p "/usr/share/ublue-os/dconfs/nvidia-silverblue/" && \
-        cp "/usr/share/glib-2.0/schemas/zz0-"*"-bazzite-nvidia-silverblue-"*".gschema.override" "/usr/share/ublue-os/dconfs/nvidia-silverblue/" && \
-        dconf-override-converter to-dconf "/usr/share/ublue-os/dconfs/nvidia-silverblue/zz0-"*"-bazzite-nvidia-silverblue-"*".gschema.override" && \
-        rm "/usr/share/ublue-os/dconfs/nvidia-silverblue/zz0-"*"-bazzite-nvidia-silverblue-"*".gschema.override" \
+        cp "/usr/share/glib-2.0/schemas/zz0-"*"-lyftos-nvidia-silverblue-"*".gschema.override" "/usr/share/ublue-os/dconfs/nvidia-silverblue/" && \
+        dconf-override-converter to-dconf "/usr/share/ublue-os/dconfs/nvidia-silverblue/zz0-"*"-lyftos-nvidia-silverblue-"*".gschema.override" && \
+        rm "/usr/share/ublue-os/dconfs/nvidia-silverblue/zz0-"*"-lyftos-nvidia-silverblue-"*".gschema.override" \
     ; fi && \
     systemctl disable supergfxd.service && \
     dnf5 config-manager setopt skip_if_unavailable=1 && \
